@@ -46,6 +46,10 @@ def _hparams(algorithm, dataset, random_seed):
     # Algorithm-specific hparam definitions. Each block of code below
     # corresponds to exactly one algorithm.
 
+    if algorithm == 'RES':
+        _hparam('mena_decay_tec', 0.001, lambda r: 10**r.uniform(-4, -1))
+        _hparam('mena_decay_sru', 0.001, lambda r: 10**r.uniform(-4, -1))
+
     if algorithm in ['DANN', 'CDANN']:
         _hparam('lambda', 1.0, lambda r: 10**r.uniform(-2, 2))
         _hparam('weight_decay_d', 0., lambda r: 10**r.uniform(-6, -2))

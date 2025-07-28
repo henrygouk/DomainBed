@@ -7,6 +7,7 @@ import torch.autograd as autograd
 
 import copy
 import numpy as np
+import random
 from collections import OrderedDict
 try:
     from backpack import backpack, extend
@@ -25,6 +26,7 @@ from domainbed.lib.misc import (
 ALGORITHMS = [
     'ERM',
     'ERMPlusPlus',
+    'RES',
     'Fish',
     'IRM',
     'GroupDRO',
@@ -231,6 +233,68 @@ class ERMPlusPlus(Algorithm,ErmPlusPlusMovingAvg):
                      self.optimizer.param_groups[0]['lr'] = (torch.Tensor(schedule[0]).requires_grad_(False))[0]
                      schedule = schedule[1:]
              return schedule
+
+class MEMA:
+    #def __init__(self, network, decay_tec=0.001, decay_stu=0.005):
+    def __init__(self, network, hparams):
+        self.hparams = hparams
+        self.network = network
+        self.network_ema = copy.deepcopy(network)
+        self.decay_tec = self.hparams["mena_decay_tec"]
+        self.decay_stu = self.hparams["mena_decay_stu"]
+
+    def update_ema(self, network):
+        # update teacher model parameter
+        new_dict = {}
+        for (name,param_q), (_,param_k) in zip(network.state_dict().items(), self.network_ema.state_dict().items()):
+            new_dict[name] = self.decay_tec * param_q.data.detach().clone() \
+                           + (1.0 - self.decay_tec) * param_k.data.detach().clone()
+        self.network_ema.load_state_dict(new_dict)
+
+        # update student model parameter
+        new_dict = {}
+        for (name,param_q), (_,param_k) in zip(network.state_dict().items(), self.network_ema.state_dict().items()):
+            new_dict[name] = (1.0 - self.decay_stu) * param_q.data.detach().clone() \
+                           + self.decay_stu * param_k.data.detach().clone()
+        self.network.load_state_dict(new_dict)
+
+class RES(Algorithm, MEMA):
+    """
+    Empirical Risk Minimization (ERM)
+    """
+    def __init__(self, input_shape, num_classes, num_domains, hparams):
+        super(RES, self).__init__(input_shape, num_classes, num_domains,
+                                  hparams)
+        self.featurizer = networks.Featurizer(input_shape, self.hparams)
+        self.classifier = networks.Classifier(
+            self.featurizer.n_outputs,
+            num_classes,
+            self.hparams['nonlinear_classifier'])
+        self.network = nn.Sequential(self.featurizer, self.classifier)
+        MEMA.__init__(self, self.network, hparams)
+
+        self.optimizer = torch.optim.Adam(
+            self.network.parameters(),
+            lr=self.hparams["lr"],
+            weight_decay=self.hparams['weight_decay'])
+
+    def update(self, minibatches):
+        x = torch.cat([x for x, y in minibatches])
+        y = torch.cat([y for x, y in minibatches])
+
+        aug_mode = random.choice(['none', 'freq_dropout', 'freq_mixup', 'freq_noise']) 
+        pred = self.classifier(self.featurizer(x, self.classifier, aug_mode))
+        loss = F.cross_entropy(pred, y)
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+        self.update_ema(self.network)
+        return {'loss': loss.item()}
+
+    def predict(self, x):
+        self.network_ema.eval()
+        return self.network_ema(x)
 
 class URM(ERM):
     """
