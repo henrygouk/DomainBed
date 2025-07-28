@@ -173,7 +173,7 @@ def _hparams(algorithm, dataset, random_seed):
         _hparam('eqrm_burnin_iters', 2500, lambda r: 10 ** r.uniform(2.5, 3.5))
         _hparam('eqrm_lr', 1e-6, lambda r: 10 ** r.uniform(-7, -5))
 
-    elif algorithm == 'ERMPlusPlus':
+    elif algorithm == 'ERMPlusPlus' or algorithm == 'Readout':
         _hparam('linear_lr', 5e-5, lambda r: 10**r.uniform(-5, -3.5))
 
     elif algorithm == 'URM':
