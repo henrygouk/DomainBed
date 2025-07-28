@@ -278,7 +278,7 @@ class RES(Algorithm, MEMA):
             lr=self.hparams["lr"],
             weight_decay=self.hparams['weight_decay'])
 
-    def update(self, minibatches):
+    def update(self, minibatches, unlabelled=None):
         x = torch.cat([x for x, y in minibatches])
         y = torch.cat([y for x, y in minibatches])
 
