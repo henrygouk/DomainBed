@@ -282,8 +282,7 @@ class RES(Algorithm, MEMA):
         x = torch.cat([x for x, y in minibatches])
         y = torch.cat([y for x, y in minibatches])
 
-        aug_mode = random.choice(['none', 'freq_dropout', 'freq_mixup', 'freq_noise']) 
-        pred = self.classifier(self.featurizer(x, self.classifier, aug_mode))
+        pred = self.network(x)
         loss = F.cross_entropy(pred, y)
 
         self.optimizer.zero_grad()
