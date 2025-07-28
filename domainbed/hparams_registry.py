@@ -48,7 +48,7 @@ def _hparams(algorithm, dataset, random_seed):
 
     if algorithm == 'RES':
         _hparam('mena_decay_tec', 0.001, lambda r: 10**r.uniform(-4, -1))
-        _hparam('mena_decay_sru', 0.001, lambda r: 10**r.uniform(-4, -1))
+        _hparam('mena_decay_stu', 0.001, lambda r: 10**r.uniform(-4, -1))
 
     if algorithm in ['DANN', 'CDANN']:
         _hparam('lambda', 1.0, lambda r: 10**r.uniform(-2, 2))
