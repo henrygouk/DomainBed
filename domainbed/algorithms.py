@@ -26,6 +26,7 @@ from domainbed.lib.misc import (
 ALGORITHMS = [
     'ERM',
     'ERMPlusPlus',
+    'Readout',
     'RES',
     'Fish',
     'IRM',
@@ -233,6 +234,12 @@ class ERMPlusPlus(Algorithm,ErmPlusPlusMovingAvg):
                      self.optimizer.param_groups[0]['lr'] = (torch.Tensor(schedule[0]).requires_grad_(False))[0]
                      schedule = schedule[1:]
              return schedule
+
+class Readout(ERMPlusPlus):
+    def __init__(self, input_shape, num_classes, num_domains, hparams):
+        hparams = copy.deepcopy(hparams)
+        hparams["linear_steps"] = 1000000
+        super(Readout, self).__init__(input_shape, num_classes, num_domains, hparams)
 
 class MEMA:
     #def __init__(self, network, decay_tec=0.001, decay_stu=0.005):
