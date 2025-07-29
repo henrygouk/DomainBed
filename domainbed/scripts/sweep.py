@@ -187,10 +187,23 @@ if __name__ == "__main__":
             ask_for_confirmation()
         launcher_fn = command_launchers.REGISTRY[args.command_launcher]
         Job.launch(to_launch, launcher_fn)
-
     elif args.command == 'delete_incomplete':
         to_delete = [j for j in jobs if j.state == Job.INCOMPLETE]
         print(f'About to delete {len(to_delete)} jobs.')
         if not args.skip_confirmation:
             ask_for_confirmation()
         Job.delete(to_delete)
+    elif args.command == 'ls' or args.command == 'list':
+        print('Listing all jobs:')
+        done = [job for job in jobs if job.state == Job.DONE]
+        incomplete = [job for job in jobs if job.state == Job.INCOMPLETE]
+        not_launched = [job for job in jobs if job.state == Job.NOT_LAUNCHED]
+
+        for job in done:
+            print(job)
+
+        for job in incomplete:
+            print(job)
+
+        for job in not_launched:
+            print(job)
