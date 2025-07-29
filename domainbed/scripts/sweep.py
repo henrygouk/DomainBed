@@ -137,7 +137,7 @@ DATASETS = [d for d in datasets.DATASETS if "Debug" not in d]
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run a sweep')
-    parser.add_argument('command', choices=['launch', 'delete_incomplete'])
+    parser.add_argument('command', choices=['launch', 'delete_incomplete', 'ls', 'list'])
     parser.add_argument('--datasets', nargs='+', type=str, default=DATASETS)
     parser.add_argument('--algorithms', nargs='+', type=str, default=algorithms.ALGORITHMS)
     parser.add_argument('--task', type=str, default="domain_generalization")
@@ -193,17 +193,4 @@ if __name__ == "__main__":
         if not args.skip_confirmation:
             ask_for_confirmation()
         Job.delete(to_delete)
-    elif args.command == 'ls' or args.command == 'list':
-        print('Listing all jobs:')
-        done = [job for job in jobs if job.state == Job.DONE]
-        incomplete = [job for job in jobs if job.state == Job.INCOMPLETE]
-        not_launched = [job for job in jobs if job.state == Job.NOT_LAUNCHED]
 
-        for job in done:
-            print(job)
-
-        for job in incomplete:
-            print(job)
-
-        for job in not_launched:
-            print(job)
