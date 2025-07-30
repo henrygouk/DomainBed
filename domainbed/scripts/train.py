@@ -257,7 +257,7 @@ if __name__ == "__main__":
             if args.save_model_every_checkpoint:
                 save_checkpoint(f'model_step{step}.pkl')
 
-    save_checkpoint('model.pkl')
+    #save_checkpoint('model.pkl')
 
     with open(os.path.join(args.output_dir, 'done'), 'w') as f:
         f.write('done')
