@@ -3,11 +3,15 @@ name = "domainbed"
 version = "0.1.0"
 requires-python = ">=3.10"
 dependencies = [
+    "configspace>=1.2.1",
     "gdown==3.13.0",
     "imageio==2.9.0",
     "numpy>=1.22.4",
     "parameterized==0.9.0",
     "pillow>=10.3.0",
+    "polars>=1.31.0",
+    "scikit-learn>=1.7.1",
+    "smac>=2.3.1",
     "timm>=0.9.16",
     "torch==2.6.0",
     "torchvision>=0.13.1",
