@@ -115,7 +115,7 @@ def main():
     parser.add_argument('--data_dir', type=str)
     parser.add_argument('--dataset', type=str)
     parser.add_argument('--test_env', type=int)
-    parser.add_argument('--batch_size', type=int, default=128)
+    parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--min_steps', type=int, default=500)
     parser.add_argument('--max_steps', type=int, default=2000)
     parser.add_argument('--model_selection', type=str, choices=['lodo', 'holdout'], default='lodo')
@@ -155,7 +155,9 @@ def main():
         max_budget=args.max_steps)
 
     if args.model_selection == 'lodo':
-        objective_function = lambda config, seed, budget: lodo_objective(env_infinite_loaders, env_fast_loaders, dataset, config, budget)
+        tr = [l for i, l in enumerate(env_infinite_loaders) if i != args.test_env]
+        val = [l for i, l in enumerate(env_fast_loaders) if i != args.test_env]
+        objective_function = lambda config, seed, budget: lodo_objective(tr, val, dataset, config, budget)
     elif args.model_selection == 'holdout':
         objective_function = lambda config, seed, budget: holdout_objective(train_loaders, val_loaders, dataset, config, budget)
     
