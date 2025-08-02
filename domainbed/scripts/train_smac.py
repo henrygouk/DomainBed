@@ -42,7 +42,7 @@ def lodo_objective(infinite_loaders, fast_loaders, dataset, config: Configuratio
         val_accuracy += misc.accuracy(algorithm, val_loader, None, device)
 
     val_accuracy /= len(fast_loaders)
-    logger.info(f"Validation accuracy: {val_accuracy:.4f} for config: {config}")
+    logger.info(f"[LODO] Validation accuracy: {val_accuracy:.4f} for config: {config}")
     return 1.0 - val_accuracy
 
 def holdout_objective(train_loaders, val_loaders, dataset, config: Configuration, budget: int):
@@ -61,7 +61,7 @@ def holdout_objective(train_loaders, val_loaders, dataset, config: Configuration
         val_accuracy += misc.accuracy(algorithm, val_loader, None, device)
 
     val_accuracy /= len(val_loaders)
-    logger.info(f"Validation accuracy: {val_accuracy:.4f} for config: {config}")
+    logger.info(f"[Holdout] Validation accuracy: {val_accuracy:.4f} for config: {config}")
     return 1.0 - val_accuracy
 
 def get_loaders(dataset, args):
@@ -115,7 +115,7 @@ def main():
     parser.add_argument('--data_dir', type=str)
     parser.add_argument('--dataset', type=str)
     parser.add_argument('--test_env', type=int)
-    parser.add_argument('--batch_size', type=int, default=128)
+    parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--min_steps', type=int, default=500)
     parser.add_argument('--max_steps', type=int, default=2000)
     parser.add_argument('--model_selection', type=str, choices=['lodo', 'holdout'], default='lodo')
