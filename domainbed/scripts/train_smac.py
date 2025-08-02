@@ -42,7 +42,7 @@ def lodo_objective(infinite_loaders, fast_loaders, dataset, config: Configuratio
         val_accuracy += misc.accuracy(algorithm, val_loader, None, device)
 
     val_accuracy /= len(fast_loaders)
-    logger.info(f"Validation accuracy: {val_accuracy:.4f} for config: {config}")
+    logger.info(f"[LODO] Validation accuracy: {val_accuracy:.4f} for config: {config}")
     return 1.0 - val_accuracy
 
 def holdout_objective(train_loaders, val_loaders, dataset, config: Configuration, budget: int):
@@ -61,7 +61,7 @@ def holdout_objective(train_loaders, val_loaders, dataset, config: Configuration
         val_accuracy += misc.accuracy(algorithm, val_loader, None, device)
 
     val_accuracy /= len(val_loaders)
-    logger.info(f"Validation accuracy: {val_accuracy:.4f} for config: {config}")
+    logger.info(f"[Holdout] Validation accuracy: {val_accuracy:.4f} for config: {config}")
     return 1.0 - val_accuracy
 
 def get_loaders(dataset, args):
