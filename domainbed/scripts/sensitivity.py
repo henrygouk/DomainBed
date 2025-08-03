@@ -114,7 +114,8 @@ def main():
                 algorithm.update(minibatches)
             
             ood_acc, ood_acc_n = accuracy(algorithm, val_loader, None, device)
-            id_acc, id_acc_n = np.mean([misc.accuracy(algorithm, train_loader, None, device) for j, train_loader in enumerate(train_loaders) if j != i])
+            id_metrics = [accuracy(algorithm, val_loader, None, device) for j, val_loader in enumerate(val_loaders) if j != i]
+            id_acc, id_acc_n = np.mean([m[0] for m in id_metrics]), np.sum([m[1] for m in id_metrics])
             print(f"{hparam_value},{i},{ood_acc:.4f},{id_acc:.4f},{ood_acc_n},{id_acc_n}")
 
 if __name__ == '__main__':
