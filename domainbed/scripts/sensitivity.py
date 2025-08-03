@@ -113,7 +113,7 @@ def main():
                 minibatches = [(x.to(device), y.to(device)) for x, y in next(minibatches_iterator)]
                 algorithm.update(minibatches)
             
-            ood_acc, ood_acc_n = misc.accuracy(algorithm, val_loader, None, device)
+            ood_acc, ood_acc_n = accuracy(algorithm, val_loader, None, device)
             id_acc, id_acc_n = np.mean([misc.accuracy(algorithm, train_loader, None, device) for j, train_loader in enumerate(train_loaders) if j != i])
             print(f"{hparam_value},{i},{ood_acc:.4f},{id_acc:.4f},{ood_acc_n},{id_acc_n}")
 
