@@ -43,6 +43,7 @@ def main():
     parser.add_argument('--holdout_fraction', type=float, default=0.2, help='Fraction of data to hold out for validation')
     parser.add_argument('--seed', type=int, default=0, help='Random seed for reproducibility')
     parser.add_argument('--algorithm', type=str, choices=["RES"], default="RES", help='Algorithm to measure the sensitivity of hyperparameters')
+    parser.add_argument('--max_steps', type=int, default=2000, help='Maximum number of training steps per environment')
     args = parser.parse_args()
 
     # Set random seeds for reproducibility
