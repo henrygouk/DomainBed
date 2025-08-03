@@ -13,16 +13,12 @@ def get_loaders(dataset, args):
     out_splits = []
 
     for env_i, env in enumerate(dataset):
-        if args.test_env == env_i:
-            in_splits.append(env)
-            out_splits.append(env)
-        else:
-            out, in_ = misc.split_dataset(env,
-                int(len(env)*args.holdout_fraction),
-                misc.seed_hash(args.seed, env_i))
+        out, in_ = misc.split_dataset(env,
+            int(len(env)*args.holdout_fraction),
+            misc.seed_hash(args.seed, env_i))
 
-            in_splits.append(in_)
-            out_splits.append(out)
+        in_splits.append(in_)
+        out_splits.append(out)
 
     train_loaders = [InfiniteDataLoader(
         dataset=env,
@@ -35,7 +31,7 @@ def get_loaders(dataset, args):
         dataset=env,
         batch_size=args.batch_size,
         num_workers=dataset.N_WORKERS)
-for i, env in enumerate(out_splits)]
+        for i, env in enumerate(out_splits)]
     
     return train_loaders, val_loaders
 
