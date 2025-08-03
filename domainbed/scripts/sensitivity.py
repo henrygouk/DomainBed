@@ -70,7 +70,12 @@ def main():
     parser.add_argument('--seed', type=int, default=0, help='Random seed for reproducibility')
     parser.add_argument('--algorithm', type=str, choices=["RES"], default="RES", help='Algorithm to measure the sensitivity of hyperparameters')
     parser.add_argument('--max_steps', type=int, default=2000, help='Maximum number of training steps per environment')
+    parser.add_argument('--output_path', type=str, help='Path to save the results')
     args = parser.parse_args()
+
+    import os
+    import sys
+    sys.stdout = misc.Tee(args.output_path)
 
     # Set random seeds for reproducibility
     random.seed(args.seed)
