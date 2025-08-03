@@ -8,6 +8,32 @@ from domainbed import algorithms,datasets, hparams_registry
 from domainbed.lib import misc
 from domainbed.lib.fast_data_loader import InfiniteDataLoader, FastDataLoader
 
+def accuracy(network, loader, weights, device):
+    correct = 0
+    total = 0
+    weights_offset = 0
+
+    network.eval()
+    with torch.no_grad():
+        for x, y in loader:
+            x = x.to(device)
+            y = y.to(device)
+            p = network.predict(x)
+            if weights is None:
+                batch_weights = torch.ones(len(x))
+            else:
+                batch_weights = weights[weights_offset : weights_offset + len(x)]
+                weights_offset += len(x)
+            batch_weights = batch_weights.to(device)
+            if p.size(1) == 1:
+                correct += (p.gt(0).eq(y).float() * batch_weights.view(-1, 1)).sum().item()
+            else:
+                correct += (p.argmax(1).eq(y).float() * batch_weights).sum().item()
+            total += batch_weights.sum().item()
+    network.train()
+
+    return correct / total, total
+
 def get_loaders(dataset, args):
     in_splits = []
     out_splits = []
@@ -87,10 +113,8 @@ def main():
                 minibatches = [(x.to(device), y.to(device)) for x, y in next(minibatches_iterator)]
                 algorithm.update(minibatches)
             
-            ood_acc = misc.accuracy(algorithm, val_loader, None, device)
-            ood_acc_n = len(val_loader.dataset)
-            id_acc = np.mean([misc.accuracy(algorithm, train_loader, None, device) for j, train_loader in enumerate(train_loaders) if j != i])
-            id_acc_n = sum([len(train_loader.dataset) for j, train_loader in enumerate(train_loaders) if j != i])
+            ood_acc, ood_acc_n = misc.accuracy(algorithm, val_loader, None, device)
+            id_acc, id_acc_n = np.mean([misc.accuracy(algorithm, train_loader, None, device) for j, train_loader in enumerate(train_loaders) if j != i])
             print(f"{hparam_value},{i},{ood_acc:.4f},{id_acc:.4f},{ood_acc_n},{id_acc_n}")
 
 if __name__ == '__main__':
