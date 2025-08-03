@@ -81,6 +81,7 @@ def main():
             tr = [l for j, l in enumerate(train_loaders) if j != i]
             minibatches_iterator = zip(*tr)
             algorithm = algorithm_class(dataset.input_shape, dataset.num_classes, len(tr), hparams)
+            algorithm.to(device)
             
             for step in range(args.max_steps):
                 minibatches = [(x.to(device), y.to(device)) for x, y in next(minibatches_iterator)]
