@@ -110,14 +110,14 @@ class ResNet(torch.nn.Module):
     def __init__(self, input_shape, hparams):
         super(ResNet, self).__init__()
         if hparams['resnet18']:
-            self.network = torchvision.models.resnet18(pretrained=ResNet50_Weights.IMAGENET1K_V2 if hparams['pretrained'] else None)
+            self.network = torchvision.models.resnet18(weights=ResNet50_Weights.IMAGENET1K_V2 if hparams['pretrained'] else None)
             self.n_outputs = 512
         else:
-            self.network = torchvision.models.resnet50(pretrained=ResNet50_Weights.IMAGENET1K_V2 if hparams['pretrained'] else None)
+            self.network = torchvision.models.resnet50(weights=ResNet50_Weights.IMAGENET1K_V2 if hparams['pretrained'] else None)
             self.n_outputs = 2048
 
         if hparams['resnet50_augmix']:
-            self.network = timm.create_model('resnet50', pretrained=hparams['pretrained'])
+            self.network = timm.create_model('resnet50.ram_in1k', pretrained=hparams['pretrained'])
             self.n_outputs = 2048
 
         # self.network = remove_batch_norm_from_resnet(self.network)
