@@ -28,6 +28,7 @@ def _hparams(algorithm, dataset, random_seed):
     # Unconditional hparam definitions.
 
     _hparam('data_augmentation', True, lambda r: True)
+    _hparam('pretrained', True, lambda r: True)
     _hparam('resnet18', False, lambda r: False)
     _hparam('resnet50_augmix', True, lambda r: True)
     _hparam('dinov2', False, lambda r: False)
